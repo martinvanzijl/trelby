@@ -1480,7 +1480,14 @@ class MyCtrl(wx.Control):
                     dc.SetPen(cfgGui.selectedPen)
                     dc.SetBrush(cfgGui.selectedBrush)
 
-                    dc.DrawRectangle(t.x + c1 * fx, y, (c2 - c1 + 1) * fx,
+                    width_in_chars = c2 - c1
+                    if width_in_chars == 0:
+                        # the line is empty or we are at the end of a line;
+                        # draw a one-character rectangle to show that it is
+                        # selected
+                        width_in_chars = 1
+
+                    dc.DrawRectangle(t.x + c1 * fx, y, width_in_chars * fx,
                         lineh)
 
                 if mainFrame.showFormatting:
