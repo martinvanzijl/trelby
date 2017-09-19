@@ -2530,7 +2530,7 @@ class MyFrame(wx.Frame):
         if event.CanVeto() and self.isModifications():
             if wx.MessageBox("You have unsaved changes. Are\n"
                              "you sure you want to exit?", "Confirm",
-                             wx.YES_NO | wx.NO_DEFAULT, self) == wx.NO:
+                             wx.YES_NO | wx.NO_DEFAULT, self) != wx.YES:
                 doExit = False
 
         if doExit:
