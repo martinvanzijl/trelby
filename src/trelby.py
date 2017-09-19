@@ -864,6 +864,10 @@ class MyCtrl(wx.Control):
 
             clines = cd.lines
 
+        # If there's something selected, remove it.
+        if self.sp.mark and cfgGl.overwriteSelectionOnInsert:
+            self.OnCut(doUpdate = False, copyToClip = False)
+
         self.sp.paste(clines)
 
         self.makeLineVisible(self.sp.line)
