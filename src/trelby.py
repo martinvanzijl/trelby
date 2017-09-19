@@ -197,7 +197,7 @@ class MyCtrl(wx.Control):
         wx.EVT_ERASE_BACKGROUND(self, self.OnEraseBackground)
         wx.EVT_LEFT_DOWN(self, self.OnLeftDown)
         wx.EVT_LEFT_UP(self, self.OnLeftUp)
-        wx.EVT_LEFT_DCLICK(self, self.OnLeftDown)
+        wx.EVT_LEFT_DCLICK(self, self.OnLeftDoubleClick)
         wx.EVT_RIGHT_DOWN(self, self.OnRightDown)
         wx.EVT_MOTION(self, self.OnMotion)
         wx.EVT_MOUSEWHEEL(self, self.OnMouseWheel)
@@ -554,6 +554,25 @@ class MyCtrl(wx.Control):
                 self.__class__.screenBuf = sb
 
         self.makeLineVisible(self.sp.line)
+
+    def OnLeftDoubleClick(self, event, mark = False):
+        # Clear mark.
+        if not self.mouseSelectActive:
+            self.sp.clearMark()
+            self.updateScreen()
+
+        # Get coords.
+        pos = event.GetPosition()
+        line, col = gd.vm.pos2linecol(self, pos.x, pos.y)
+
+        # Do not start selecting anything.
+        self.mouseSelectActive = False
+
+        # Select word.
+        if line is not None:
+            self.sp.gotoPos(line, col, mark)
+            self.sp.selectCurrentWordCmd()
+            self.updateScreen()
 
     def OnLeftDown(self, event, mark = False):
         if not self.mouseSelectActive:

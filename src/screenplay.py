@@ -2909,6 +2909,29 @@ Generated with <a href="http://www.trelby.org">Trelby</a>.</p>
         self.line = len(self.lines) - 1
         self.column = len(self.lines[self.line].text)
 
+    # select the current word
+    def selectCurrentWordCmd(self):
+		# get current line text
+        current_line = self.lines[self.line]
+        text = current_line.text
+
+		# find next and previous space
+        word_start = text.rfind(" ", 0, self.column)
+        word_end = text.find(" ", self.column)
+
+        # add 1 to word start to cover both
+        # 1) result = -1 (space not found) OR
+        # 2) advance beyond the "found" space
+        word_start += 1
+
+		# don't go past line end
+        if word_end == -1:
+            word_end = len(text)
+
+		# highlight the word
+        self.setMark(self.line, word_start)
+        self.column = word_end
+
     def insertForcedLineBreakCmd(self, cs):
         u = undo.ManyElems(self, undo.CMD_MISC, self.line, 1, 1)
 
