@@ -1006,6 +1006,9 @@ class ConfigGlobal:
         v.addInt("pbi", PBI_REAL, "PageBreakIndicators", PBI_FIRST,
                     PBI_LAST)
 
+        # whether to use blinking cursor
+        v.addBool("useBlinkingCursor", False, "useBlinkingCursor")
+
         # PDF viewer program and args. defaults are empty since generating
         # them is a complex process handled by findPDFViewer.
         v.addStrUnicode("pdfViewerPath", u"", "PDF/ViewerPath")

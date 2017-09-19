@@ -206,6 +206,18 @@ class MyCtrl(wx.Control):
         self.createEmptySp()
         self.updateScreen(redraw = False)
 
+        self.blinkingCursorVisibleFlag = True
+        self.blinkingCursorTimer = wx.Timer(self)
+        self.Bind(wx.EVT_TIMER, self.OnBlinkingCursorTimerEvent,
+			self.blinkingCursorTimer)
+        self.blinkingCursorTimer.Start(500)
+
+    def OnBlinkingCursorTimerEvent(self, event):
+        self.blinkingCursorVisibleFlag = not self.blinkingCursorVisibleFlag
+
+        if cfgGl.useBlinkingCursor:
+            self.updateScreen()
+
     def OnChangeType(self, event):
         cs = screenplay.CommandState()
 
@@ -1515,12 +1527,13 @@ class MyCtrl(wx.Control):
                                 size.width, 0)
 
                 if i == self.sp.line:
-                    posX = t.x
-                    cursorY = y
-                    acFi = fi
-                    dc.SetPen(cfgGui.cursorPen)
-                    dc.SetBrush(cfgGui.cursorBrush)
-                    dc.DrawRectangle(t.x + self.sp.column * fx, y, fx, fi.fy)
+                    if not cfgGl.useBlinkingCursor or self.blinkingCursorVisibleFlag:
+                        posX = t.x
+                        cursorY = y
+                        acFi = fi
+                        dc.SetPen(cfgGui.cursorPen)
+                        dc.SetBrush(cfgGui.cursorBrush)
+                        dc.DrawRectangle(t.x + self.sp.column * fx, y, fx, fi.fy)
 
             if len(t.text) != 0:
                 tl = texts.get(fi.font)

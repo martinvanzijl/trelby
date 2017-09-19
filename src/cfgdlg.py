@@ -261,6 +261,11 @@ class DisplayPanel(wx.Panel):
             choices = [ "None", "Normal", "Normal + unadjusted   " ])
         vsizer.Add(self.pbRb)
 
+        self.blinkingCursorCheckBox = wx.CheckBox(
+            self, -1, "Use blinking cursor")
+        wx.EVT_CHECKBOX(self, self.blinkingCursorCheckBox.GetId(), self.OnMisc)
+        vsizer.Add(self.blinkingCursorCheckBox, 0, wx.EXPAND | wx.BOTTOM | wx.TOP, 10)
+
         self.fontsLb.SetSelection(0)
         self.updateFontLb()
 
@@ -306,6 +311,7 @@ class DisplayPanel(wx.Panel):
     def OnMisc(self, event = None):
         self.cfg.fontYdelta = util.getSpinValue(self.spacingEntry)
         self.cfg.pbi = self.pbRb.GetSelection()
+        self.cfg.useBlinkingCursor = bool(self.blinkingCursorCheckBox.IsChecked())
 
     def updateFontLb(self):
         names = ["Normal", "Bold", "Italic", "Bold-Italic"]
@@ -335,6 +341,7 @@ class DisplayPanel(wx.Panel):
     def cfg2gui(self):
         self.spacingEntry.SetValue(self.cfg.fontYdelta)
         self.pbRb.SetSelection(self.cfg.pbi)
+        self.blinkingCursorCheckBox.SetValue(self.cfg.useBlinkingCursor)
 
 class ElementsPanel(wx.Panel):
     def __init__(self, parent, id, cfg):
