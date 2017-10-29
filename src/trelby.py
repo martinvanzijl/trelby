@@ -1520,7 +1520,11 @@ class MyCtrl(wx.Control):
                     acFi = fi
                     dc.SetPen(cfgGui.cursorPen)
                     dc.SetBrush(cfgGui.cursorBrush)
-                    dc.DrawRectangle(t.x + self.sp.column * fx, y, fx, fi.fy)
+                    
+                    if cfgGl.useThinCursor:
+                        dc.DrawRectangle(t.x + self.sp.column * fx, y, 2, fi.fy)
+                    else:
+                        dc.DrawRectangle(t.x + self.sp.column * fx, y, fx, fi.fy)
 
             if len(t.text) != 0:
                 tl = texts.get(fi.font)

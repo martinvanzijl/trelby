@@ -1005,6 +1005,9 @@ class ConfigGlobal:
         # page break indicators to show
         v.addInt("pbi", PBI_REAL, "PageBreakIndicators", PBI_FIRST,
                     PBI_LAST)
+                    
+        # whether to use a thin cursor
+        v.addBool("useThinCursor", False, "UseThinCursor")
 
         # PDF viewer program and args. defaults are empty since generating
         # them is a complex process handled by findPDFViewer.

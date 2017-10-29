@@ -260,6 +260,11 @@ class DisplayPanel(wx.Panel):
             style = wx.RA_SPECIFY_COLS, majorDimension = 1,
             choices = [ "None", "Normal", "Normal + unadjusted   " ])
         vsizer.Add(self.pbRb)
+        
+        self.useThinCursor = wx.CheckBox(
+            self, -1, "Use thin cursor")
+        wx.EVT_CHECKBOX(self, self.useThinCursor.GetId(), self.OnMisc)
+        vsizer.Add(self.useThinCursor)        
 
         self.fontsLb.SetSelection(0)
         self.updateFontLb()
@@ -306,6 +311,7 @@ class DisplayPanel(wx.Panel):
     def OnMisc(self, event = None):
         self.cfg.fontYdelta = util.getSpinValue(self.spacingEntry)
         self.cfg.pbi = self.pbRb.GetSelection()
+        self.cfg.useThinCursor = self.useThinCursor.GetValue()
 
     def updateFontLb(self):
         names = ["Normal", "Bold", "Italic", "Bold-Italic"]
@@ -335,6 +341,7 @@ class DisplayPanel(wx.Panel):
     def cfg2gui(self):
         self.spacingEntry.SetValue(self.cfg.fontYdelta)
         self.pbRb.SetSelection(self.cfg.pbi)
+        self.useThinCursor.SetValue(self.cfg.useThinCursor)
 
 class ElementsPanel(wx.Panel):
     def __init__(self, parent, id, cfg):
