@@ -1,6 +1,7 @@
 # -*- coding: iso-8859-1 -*-
 
 import config
+import math
 import mypager
 import pml
 import util
@@ -485,25 +486,35 @@ class ViewModeSideBySide(ViewMode):
 
         sel = None
 
-        for t in self.getScreen(ctrl, False)[0]:
+        # check which page was clicked on
+        pageGap = 10
+        clickedPage = math.trunc(x / ( self.getPageWidth(ctrl) + pageGap ) )
+
+        # limit to the actual number of pages
+        textItems = self.getScreen(ctrl, False)[0]
+
+        if len(textItems) > 0:
+            lastItem = textItems[-1]
+            lastPageNumber = math.trunc(lastItem.x / ( self.getPageWidth(ctrl) + pageGap ))
+            clickedPage = min(clickedPage, lastPageNumber)
+
+        # calculate selected position
+        for t in textItems:
             if t.line == -1:
                 continue
 
-            # above or to the left
-            if (x < t.x) or (y < t.y):
-                continue
-
-            # below
-            if y > (t.y + lineh - 1):
-                continue
-
-            # to the right
-            w = t.fi.fx * (len(ls[t.line].text) + 1)
-            if x > (t.x + w - 1):
-                continue
-
             sel = t
-            break
+
+            # check which page the line belongs to
+            linePage = math.trunc(t.x / ( self.getPageWidth(ctrl) + pageGap ))
+
+            # different page
+            if clickedPage != linePage:
+                continue
+
+            # clicked below the top of the line (so this is the correct line)
+            if (t.y + lineh) > y:
+                break
 
         if sel == None:
             return (None, None)
