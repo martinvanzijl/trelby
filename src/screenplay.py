@@ -2909,6 +2909,11 @@ Generated with <a href="http://www.trelby.org">Trelby</a>.</p>
         self.line = len(self.lines) - 1
         self.column = len(self.lines[self.line].text)
 
+    # select the current line
+    def selectCurrentLineCmd(self):
+        self.setMark(self.line, 0)
+        self.column = len(self.lines[self.line].text)
+
     # select the current word
     def selectCurrentWordCmd(self):
 		# get current line text
