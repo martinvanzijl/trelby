@@ -1845,6 +1845,11 @@ class MyFrame(wx.Frame):
         hsizer.Add(self.tabCtrl, 1, wx.EXPAND)
 
         self.statusCtrl = misc.MyStatus(self, -1, getCfgGui)
+
+        # prevent the status widget from hogging the keyboard focus
+        # (see https://github.com/oskusalerma/trelby/issues/326).
+        wx.EVT_SET_FOCUS(self.statusCtrl, self.OnFocus)
+
         hsizer.Add(self.statusCtrl)
 
         vsizer.Add(hsizer, 0, wx.EXPAND)
