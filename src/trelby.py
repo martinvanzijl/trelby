@@ -202,6 +202,7 @@ class MyCtrl(wx.Control):
         wx.EVT_MOTION(self, self.OnMotion)
         wx.EVT_MOUSEWHEEL(self, self.OnMouseWheel)
         wx.EVT_CHAR(self, self.OnKeyChar)
+        wx.EVT_KEY_DOWN(self, self.OnKeyDown)
 
         self.createEmptySp()
         self.updateScreen(redraw = False)
@@ -1210,6 +1211,12 @@ class MyCtrl(wx.Control):
         else:
             self.OnCut(doUpdate = False, copyToClip = False)
 
+    def cmdDeletePreviousWord(self, cs):
+        self.sp.deletePreviousWordCmd(cs)
+
+    def cmdDeleteNextWord(self, cs):
+        self.sp.deleteNextWordCmd(cs)
+
     def cmdForcedLineBreak(self, cs):
         self.sp.insertForcedLineBreakCmd(cs)
 
@@ -1317,6 +1324,37 @@ class MyCtrl(wx.Control):
 
     def cmdTest(self, cs):
         pass
+
+    def OnKeyDown(self, ev):
+        # We need to use OnKeyDown to catch ctrl+backspace and ctrl+delete on Windows
+        kc = ev.GetKeyCode()
+        if  kc in [wx.WXK_BACK, wx.WXK_DELETE] and ev.ControlDown():
+            cs = screenplay.CommandState()
+            cs.mark = bool(ev.ShiftDown()) # Is this required?
+
+            if kc == wx.WXK_BACK:
+                self.cmdDeletePreviousWord(cs)
+            else:
+                self.cmdDeleteNextWord(cs)
+
+            self.sp.cmdPost(cs)
+
+            if cfgGl.paginateInterval > 0:
+                now = time.time()
+
+                if (now - self.sp.lastPaginated) >= cfgGl.paginateInterval:
+                    self.sp.paginate()
+
+                    cs.needsVisifying = True
+
+            if cs.needsVisifying:
+                scrollDirection = config.SCROLL_CENTER
+                self.makeLineVisible(self.sp.line, scrollDirection)
+
+            self.updateScreen()
+        else:
+            # Let the OnKeyChar method handle it
+            ev.Skip()
 
     def OnKeyChar(self, ev):
         kc = ev.GetKeyCode()

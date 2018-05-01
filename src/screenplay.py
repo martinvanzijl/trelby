@@ -1790,6 +1790,79 @@ Generated with <a href="http://www.trelby.org">Trelby</a>.</p>
             self.column = column
             self.line = line
 
+    # delete the previous word
+    def deletePreviousWordCmd(self, cs):
+
+        # do a simple delete if we are on the start of the line
+        if self.column == 0:
+            self.deleteBackwardCmd(cs)
+            return
+
+        # search for previous space
+        text = self.lines[self.line].text
+        startSearchIndex = self.column
+
+        while startSearchIndex > 0:
+            # find previous space
+            word_start = text.rfind(" ", 0, startSearchIndex)
+
+            # add 1 to word start to cover both scenarios
+            # 1) result = -1 (space not found), so we make it zero (start of line)
+            # 2) result >= 0 (space was found), so advance beyond the space
+            word_start += 1
+
+            if word_start < startSearchIndex: # make sure we go back at least one char
+                break
+
+            startSearchIndex -= 1
+
+        # highlight the word
+        self.column -= 1    # Last character is exclusive
+        self.setMark(self.line, word_start)
+
+        # delete it
+        self.getSelectedAsCD(True)
+        self.clearMark()
+
+        # TODO: Make the "undo" restore the cursor to the original position.
+        # Currently it is off-by-one due to the "-1" line above.
+
+    # delete the next word
+    def deleteNextWordCmd(self, cs):
+
+        # do a simple delete if we are at the end of the line
+        text = self.lines[self.line].text
+        length = len(text)
+
+        if self.column >= length:
+            self.deleteForwardCmd(cs)
+            return
+
+        # search for next space
+        text = self.lines[self.line].text
+        startSearchIndex = self.column
+
+        while startSearchIndex < length - 1:
+            # find next space
+            word_end = text.find(" ", startSearchIndex)
+
+            if word_end == -1:
+                # no next space - select to end of line
+                word_end = length
+                break
+
+            if word_end > startSearchIndex: # make sure we go forward at least one char
+                break
+
+            startSearchIndex += 1
+
+        # highlight the word
+        self.setMark(self.line, word_end - 1)
+
+        # delete it
+        self.getSelectedAsCD(True)
+        self.clearMark()
+
     # set line types from 'line' to the end of the element to 'lt'.
     def setLineTypes(self, line, lt):
         ls = self.lines
