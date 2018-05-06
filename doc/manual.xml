@@ -1253,6 +1253,12 @@
 		<para>'Lines to scroll per mouse wheel event' needs no
 		explaining.</para>
 
+		<para>'Automatically save scripts every X minutes' - tick
+		the checkbox to enable automatic saving. Set the interval in
+		minutes using the edit box. If the box is ticked, Trelby will
+		save all open scripts at the chosen interval - except the new
+		ones which haven't been saved before.</para>
+
 	  </sect2>
 
 	</sect1>

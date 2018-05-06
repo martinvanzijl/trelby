@@ -508,6 +508,9 @@ class MyCtrl(wx.Control):
 
         mainFrame.checkFonts()
 
+        # auto-save
+        mainFrame.applyAutoSaveConfig()
+
     def applyHeaders(self, newHeaders):
         self.sp.headers = newHeaders
         self.sp.markChanged()
@@ -1792,6 +1795,12 @@ class MyFrame(wx.Frame):
 
         self.toolBar = self.CreateToolBar(wx.TB_VERTICAL)
 
+        # auto-save
+        self.autoSaveTimer = wx.Timer(self)
+        self.Bind(wx.EVT_TIMER, self.OnAutoSaveTimerEvent,
+			self.autoSaveTimer)
+        self.applyAutoSaveConfig()
+
         def addTB(id, iconFilename, toolTip):
             self.toolBar.AddLabelTool(
                 id, "", misc.getBitmap("resources/%s" % iconFilename),
@@ -1965,6 +1974,18 @@ class MyFrame(wx.Frame):
         wx.EVT_SET_FOCUS(self, self.OnFocus)
 
         self.Layout()
+
+    def OnAutoSaveTimerEvent(self, event):
+        print "Auto-saving..."
+
+        # Save all scripts (except new ones)
+        for i in range(len(self.tabCtrl.pages)):
+            pair = self.tabCtrl.pages[i]
+            panel = pair[0]
+
+            # TODO: Perhaps save new files, too?
+            if panel.ctrl.fileName:
+                panel.ctrl.OnSave()
 
     def init(self):
         self.updateKbdCommands()
@@ -2168,6 +2189,20 @@ class MyFrame(wx.Frame):
                 "will cause the program not to function correctly.\n"
                 "Please change the fonts at File/Settings/Change.\n\n"
                 + "\n".join(failed), "Error", wx.OK, self)
+
+    def applyAutoSaveConfig(self):
+        if cfgGl.autoSaveEnabled:
+            oneSecond = 1000
+            oneMinute = oneSecond * 60
+            newInterval = cfgGl.autoSaveInterval * oneMinute
+
+            if self.autoSaveTimer.IsRunning() and \
+               self.autoSaveTimer.GetInterval() == newInterval:
+               pass # nothing changed
+            else:
+                self.autoSaveTimer.Start(newInterval)
+        else:
+            self.autoSaveTimer.Stop()
 
     # If we get focus, pass it on to ctrl.
     def OnFocus(self, event):

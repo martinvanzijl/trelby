@@ -1109,6 +1109,18 @@ class MiscPanel(wx.Panel):
         self.addSpin("wheelScroll", "Lines to scroll per mouse wheel event:",
                      self, vsizer, "mouseWheelLines")
 
+        hsizer = wx.BoxSizer(wx.HORIZONTAL)
+        self.autoSaveCb = wx.CheckBox(self, -1, "Automatically save scripts"
+                                                " every")
+        hsizer.Add(self.autoSaveCb, 0, wx.ALIGN_CENTER_VERTICAL, 10)
+        self.addSpin("autoSaveInterval", "",
+                     self, hsizer, "autoSaveInterval")
+        hsizer.Add(wx.StaticText(self, -1, " minutes"), 0,
+                   wx.ALIGN_CENTER_VERTICAL, 10)
+        vsizer.Add(hsizer, 0, 0, pad)
+
+        wx.EVT_CHECKBOX(self, self.autoSaveCb.GetId(), self.OnMisc)
+
         self.cfg2gui()
 
         util.finishWindow(self, vsizer, center = False)
@@ -1151,6 +1163,10 @@ class MiscPanel(wx.Panel):
         self.cfg.paginateInterval = util.getSpinValue(self.paginateEntry)
         self.cfg.mouseWheelLines = util.getSpinValue(self.wheelScrollEntry)
         self.cfg.splashTime = util.getSpinValue(self.splashTimeEntry)
+
+        self.cfg.autoSaveEnabled = self.autoSaveCb.IsChecked()
+        self.cfg.autoSaveInterval = \
+            util.getSpinValue(self.autoSaveIntervalEntry)
 
     def OnBrowse(self, event):
         dlg = wx.DirDialog(
@@ -1200,6 +1216,9 @@ class MiscPanel(wx.Panel):
         self.paginateEntry.SetValue(self.cfg.paginateInterval)
         self.wheelScrollEntry.SetValue(self.cfg.mouseWheelLines)
         self.splashTimeEntry.SetValue(self.cfg.splashTime)
+
+        self.autoSaveCb.SetValue(self.cfg.autoSaveEnabled)
+        self.autoSaveIntervalEntry.SetValue(self.cfg.autoSaveInterval)
 
 class ElementsGlobalPanel(wx.Panel):
     def __init__(self, parent, id, cfg):

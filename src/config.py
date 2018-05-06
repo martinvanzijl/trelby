@@ -977,8 +977,14 @@ class ConfigGlobal:
         # how many lines to scroll per mouse wheel event
         v.addInt("mouseWheelLines", 4, "MouseWheelLines", 1, 50)
 
+        # interval in minutes between auto-saving
+        v.addInt("autoSaveInterval", 15, "AutoSaveInterval", 1, 1000)
+
         # interval in seconds between automatic pagination (0 = disabled)
         v.addInt("paginateInterval", 1, "PaginateInterval", 0, 10)
+
+        # whether auto-save is enabled
+        v.addBool("autoSaveEnabled", False, "AutoSaveEnabled")
 
         # whether to check script for errors before export / print
         v.addBool("checkOnExport", True, "CheckScriptForErrors")
