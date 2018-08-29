@@ -1320,13 +1320,18 @@ class MyCtrl(wx.Control):
 
     def OnKeyChar(self, ev):
         kc = ev.GetKeyCode()
+        uc = ev.GetUnicodeKey()
 
         cs = screenplay.CommandState()
         cs.mark = bool(ev.ShiftDown())
         scrollDirection = config.SCROLL_CENTER
 
-        if not ev.ControlDown() and not ev.AltDown() and \
-               util.isValidInputChar(kc):
+        isNormalChar    = not ev.ControlDown() and not ev.AltDown() and \
+                          util.isValidInputChar(kc)
+        # TODO: Check for keyboard shortcuts.
+        isUnicodeChar   = ev.AltDown() and uc != wx.WXK_NONE
+
+        if isNormalChar or isUnicodeChar:
             # WX2.6-FIXME: we should probably use GetUnicodeKey() (dunno
             # how to get around the isValidInputChar test in the preceding
             # line, need to test what GetUnicodeKey() returns on
