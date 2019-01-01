@@ -260,11 +260,11 @@ class DisplayPanel(wx.Panel):
             style = wx.RA_SPECIFY_COLS, majorDimension = 1,
             choices = [ "None", "Normal", "Normal + unadjusted   " ])
         vsizer.Add(self.pbRb)
-        
+
         self.useThinCursor = wx.CheckBox(
             self, -1, "Use thin cursor")
         wx.EVT_CHECKBOX(self, self.useThinCursor.GetId(), self.OnMisc)
-        vsizer.Add(self.useThinCursor)        
+        vsizer.Add(self.useThinCursor, 0, wx.EXPAND | wx.BOTTOM | wx.TOP, 10)
 
         self.fontsLb.SetSelection(0)
         self.updateFontLb()

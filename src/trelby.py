@@ -1520,7 +1520,7 @@ class MyCtrl(wx.Control):
                     acFi = fi
                     dc.SetPen(cfgGui.cursorPen)
                     dc.SetBrush(cfgGui.cursorBrush)
-                    
+
                     if cfgGl.useThinCursor:
                         dc.DrawRectangle(t.x + self.sp.column * fx, y, 2, fi.fy)
                     else:

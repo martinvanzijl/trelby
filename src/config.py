@@ -1005,7 +1005,7 @@ class ConfigGlobal:
         # page break indicators to show
         v.addInt("pbi", PBI_REAL, "PageBreakIndicators", PBI_FIRST,
                     PBI_LAST)
-                    
+
         # whether to use a thin cursor
         v.addBool("useThinCursor", False, "UseThinCursor")
 
