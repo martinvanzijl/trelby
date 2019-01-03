@@ -8,6 +8,7 @@ def testBasic():
     sp = u.load()
 
     sp.cmd("setMark")
+    sp.cmd("moveRight")
     sp.getSelectedAsCD(True)
 
     assert sp.lines[0].lb == scr.LB_LAST
@@ -76,7 +77,7 @@ def testFirstDelete():
     assert sp.lines[1].lb == scr.LB_SPACE
     assert sp.lines[1].lt == scr.ACTION
     assert sp.lines[1].lt == scr.ACTION
-    assert sp.lines[1].text == "lmost zero. Only at brief moments do we catch sight of the"
+    assert sp.lines[1].text == "almost zero. Only at brief moments do we catch sight of the"
 
     sp._validate()
 
