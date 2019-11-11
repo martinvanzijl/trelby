@@ -1328,14 +1328,10 @@ class MyCtrl(wx.Control):
 
         isNormalChar    = not ev.ControlDown() and not ev.AltDown() and \
                           util.isValidInputChar(kc)
-        # TODO: Check for keyboard shortcuts.
-        isUnicodeChar   = ev.AltDown() and uc != wx.WXK_NONE
+        isUnicodeChar   = ev.GetModifiers() == wx.MOD_ALTGR and \
+                          uc != wx.WXK_NONE
 
         if isNormalChar or isUnicodeChar:
-            # WX2.6-FIXME: we should probably use GetUnicodeKey() (dunno
-            # how to get around the isValidInputChar test in the preceding
-            # line, need to test what GetUnicodeKey() returns on
-            # non-input-character events)
 
             addChar = True
 
