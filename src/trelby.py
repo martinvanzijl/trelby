@@ -205,7 +205,7 @@ class MyCtrl(wx.Control):
 
         self.createEmptySp()
         self.updateScreen(redraw = False)
-        
+
         self.lastDoubleClickTime = 0
 
     def OnChangeType(self, event):
@@ -560,7 +560,7 @@ class MyCtrl(wx.Control):
     def OnLeftDoubleClick(self, event, mark = False):
         # Store the timestamp so we can check for triple-clicks.
         self.lastDoubleClickTime = event.GetTimestamp()
-        
+
         # Clear mark.
         if not self.mouseSelectActive:
             self.sp.clearMark()
@@ -576,19 +576,19 @@ class MyCtrl(wx.Control):
         # Select word.
         if line is not None:
             self.sp.gotoPos(line, col, mark)
-            self.sp.selectCurrentWordCmd()
+            self.sp.selectCurrentWord()
             self.updateScreen()
 
     def OnLeftDown(self, event, mark = False):
         # Check for triple-clicks.
         time = event.GetTimestamp()
         duration = time - self.lastDoubleClickTime
-        
+
         if duration < 200:
             # We have a triple-click.
             self.OnLeftTripleClick(event, mark)
             return
-        
+
         if not self.mouseSelectActive:
             self.sp.clearMark()
             self.updateScreen()
@@ -611,8 +611,8 @@ class MyCtrl(wx.Control):
 
         if not cd or ((len(cd.lines) == 1) and (len(cd.lines[0].text) < 2)):
             self.sp.clearMark()
-            
-    def OnLeftTripleClick(self, event, mark = False):        
+
+    def OnLeftTripleClick(self, event, mark = False):
         # Clear mark.
         if not self.mouseSelectActive:
             self.sp.clearMark()
@@ -628,7 +628,7 @@ class MyCtrl(wx.Control):
         # Select current line.
         if line is not None:
             self.sp.gotoPos(line, col, mark)
-            self.sp.selectCurrentLineCmd()
+            self.sp.selectCurrentLine()
             self.updateScreen()
 
     def OnMotion(self, event):
@@ -1395,11 +1395,11 @@ class MyCtrl(wx.Control):
             if addChar:
                 cs.char = chr(kc)
 
-                if opts.isTest and (cs.char == "ï¿½"):
+                if opts.isTest and (cs.char == "å"):
                     self.loadFile(u"sample.trelby")
-                elif opts.isTest and (cs.char == "ï¿½"):
+                elif opts.isTest and (cs.char == "¤"):
                     self.cmdTest(cs)
-                elif opts.isTest and (cs.char == "ï¿½"):
+                elif opts.isTest and (cs.char == "½"):
                     self.cmdSpeedTest(cs)
                 else:
                     self.sp.addCharCmd(cs)

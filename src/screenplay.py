@@ -2910,30 +2910,35 @@ Generated with <a href="http://www.trelby.org">Trelby</a>.</p>
         self.column = len(self.lines[self.line].text)
 
     # select the current line
-    def selectCurrentLineCmd(self):
+    def selectCurrentLine(self):
         self.setMark(self.line, 0)
         self.column = len(self.lines[self.line].text)
 
     # select the current word
-    def selectCurrentWordCmd(self):
-		# get current line text
+    def selectCurrentWord(self):
+        # get current line text
         current_line = self.lines[self.line]
         text = current_line.text
 
-		# find next and previous space
+        # find next and previous space
         word_start = text.rfind(" ", 0, self.column)
         word_end = text.find(" ", self.column)
 
-        # add 1 to word start to cover both
-        # 1) result = -1 (space not found) OR
-        # 2) advance beyond the "found" space
-        word_start += 1
+        if word_start < 0:
+            # no previous space, so select from start of line
+            word_start = 0
+        else:
+            # space found, so select from just after it
+            word_start += 1
 
-		# don't go past line end
         if word_end == -1:
+            # no next space, so select till end of line
             word_end = len(text)
+        else:
+            # space found, so select till just before it
+            word_end -= 1
 
-		# highlight the word
+        # highlight the word
         self.setMark(self.line, word_start)
         self.column = word_end
 
