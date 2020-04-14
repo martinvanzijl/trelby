@@ -210,6 +210,9 @@
 		element will always have the style of the preceding
 		element.</para>
 
+		<para>You can use CTRL + Delete to delete the next word, and
+		CTRL + Backspace to delete the previous word.</para>
+
 	  </sect2>
 
 	  <sect2 id="add_element">

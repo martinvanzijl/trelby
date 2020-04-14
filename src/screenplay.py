@@ -1793,71 +1793,50 @@ Generated with <a href="http://www.trelby.org">Trelby</a>.</p>
     # delete the previous word
     def deletePreviousWordCmd(self, cs):
 
-        # do a simple delete if we are on the start of the line
-        if self.column == 0:
+        # just delete one character if we are at column 0 or 1
+        if self.column <= 1:
             self.deleteBackwardCmd(cs)
             return
 
-        # search for previous space
+        # find the previous non-space (i.e. end of previous word)
         text = self.lines[self.line].text
-        startSearchIndex = self.column
+        word_end = util.findPreviousNonSpace(text, self.column - 1)
 
-        while startSearchIndex > 0:
-            # find previous space
-            word_start = text.rfind(" ", 0, startSearchIndex)
-
-            # add 1 to word start to cover both scenarios
-            # 1) result = -1 (space not found), so we make it zero (start of line)
-            # 2) result >= 0 (space was found), so advance beyond the space
-            word_start += 1
-
-            if word_start < startSearchIndex: # make sure we go back at least one char
-                break
-
-            startSearchIndex -= 1
+        # find the space before that (i.e. start of previous word)
+        word_start = text.rfind(" ", 0, word_end) + 1
 
         # highlight the word
-        self.column -= 1    # Last character is exclusive
+        self.column -= 1 # last character is exclusive
         self.setMark(self.line, word_start)
 
         # delete it
         self.getSelectedAsCD(True)
         self.clearMark()
 
-        # TODO: Make the "undo" restore the cursor to the original position.
+        # Make the "undo" restore the cursor to the original position.
         # Currently it is off-by-one due to the "-1" line above.
+        self.lastUndo.startPos.column += 1
 
     # delete the next word
     def deleteNextWordCmd(self, cs):
 
-        # do a simple delete if we are at the end of the line
         text = self.lines[self.line].text
         length = len(text)
 
+        # just delete one character if we are at the last column
         if self.column >= length:
             self.deleteForwardCmd(cs)
             return
 
-        # search for next space
-        text = self.lines[self.line].text
-        startSearchIndex = self.column
+        # find for next non-space (i.e. start of next word)
+        word_start = util.findNextNonSpace(text, self.column + 1)
 
-        while startSearchIndex < length - 1:
-            # find next space
-            word_end = text.find(" ", startSearchIndex)
-
-            if word_end == -1:
-                # no next space - select to end of line
-                word_end = length
-                break
-
-            if word_end > startSearchIndex: # make sure we go forward at least one char
-                break
-
-            startSearchIndex += 1
+        # find the space after that (i.e. end of next word)
+        word_end = text.find(" ", word_start) - 1
+        if word_end < 0: word_end = length
 
         # highlight the word
-        self.setMark(self.line, word_end - 1)
+        self.setMark(self.line, word_end)
 
         # delete it
         self.getSelectedAsCD(True)

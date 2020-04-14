@@ -97,3 +97,167 @@ def testForwardLbForcedTypeConvert():
     sp.cmd("deleteForward")
 
     sp._validate()
+
+# test deleting the previous word in the middle of a line
+def testDeletePreviousWordInMiddleOfLine():
+    sp = u.new()
+
+    sp.paste([scr.Line(text = "One Two Three", lt = scr.ACTION)])
+
+    sp.gotoPos(0, len("One Two"))
+    sp.cmd("deletePreviousWord")
+
+    assert sp.lines[0].text == "One  Three"
+
+# test deleting the next word in the middle of a line
+def testDeleteNextWordInMiddleOfLine():
+    sp = u.new()
+
+    sp.paste([scr.Line(text = "One Two Three", lt = scr.ACTION)])
+
+    sp.gotoPos(0, len("One "))
+    sp.cmd("deleteNextWord")
+
+    assert sp.lines[0].text == "One  Three"
+
+# test deleting the previous word when the previous character is a space.
+# the space and the word after it should be deleted
+def testDeletePreviousWordAfterSpace():
+    sp = u.new()
+
+    sp.paste([scr.Line(text = "One Two Three", lt = scr.ACTION)])
+
+    sp.gotoPos(0, len("One Two ")) # go to after the space
+    sp.cmd("deletePreviousWord")
+
+    assert sp.lines[0].text == "One Three"
+
+# test deleting the next word when the next character is a space.
+# the space and the word before it should be deleted
+def testDeleteNextWordAfterSpace():
+    sp = u.new()
+
+    sp.paste([scr.Line(text = "One Two Three", lt = scr.ACTION)])
+
+    sp.gotoPos(0, len("One")) # go to before the space
+    sp.cmd("deleteNextWord")
+
+    assert sp.lines[0].text == "One Three"
+
+# Test deleting the previous word when at the start of a line with
+# a forced line break in between the lines.
+# In this implementation, the line break is simply deleted.
+def testDeletePreviousWordAtStartOfLine():
+    sp = u.new()
+
+    sp.paste([scr.Line(text = "One Two Three", lt = scr.ACTION)])
+    sp.cmd("insertForcedLineBreak")
+    sp.paste([scr.Line(text = "Four Five Six", lt = scr.ACTION)])
+
+    sp.gotoPos(1, 0) # go to start of second line.
+    sp.cmd("deletePreviousWord")
+
+    assert len(sp.lines) == 1
+    assert sp.lines[0].text == "One Two ThreeFour Five Six"
+
+# Test deleting the previous next when at the end of a line with
+# a forced line break in between the lines.
+# In this implementation, the line break is simply deleted.
+def testDeleteNextWordAtEndOfLine():
+    sp = u.new()
+
+    sp.paste([scr.Line(text = "One Two Three", lt = scr.ACTION)])
+    sp.cmd("insertForcedLineBreak")
+    sp.paste([scr.Line(text = "Four Five Six", lt = scr.ACTION)])
+
+    sp.gotoPos(0, len(sp.lines[0].text)) # go to end of first line.
+    sp.cmd("deleteNextWord")
+
+    assert len(sp.lines) == 1
+    assert sp.lines[0].text == "One Two ThreeFour Five Six"
+
+# Test deleting previous word when the line contains only spaces.
+# The preceding spaces should be deleted.
+def testDeletePreviousWordSpacesOnly():
+    sp = u.new()
+
+    sp.paste([scr.Line(text = "One Two Three", lt = scr.ACTION)])
+    sp.cmd("insertForcedLineBreak")
+    sp.paste([scr.Line(text = "   ", lt = scr.ACTION)])
+
+    sp.gotoPos(1, len("   "))
+    sp.cmd("deletePreviousWord")
+
+    assert len(sp.lines) == 1
+    assert sp.lines[0].text == "One Two Three"
+
+# Test deleting previous word when the line contains only spaces.
+# The preceding spaces should be deleted.
+def testDeleteNextWordSpacesOnly():
+    sp = u.new()
+
+    sp.paste([scr.Line(text = "One Two Three", lt = scr.ACTION)])
+    sp.cmd("insertForcedLineBreak")
+    sp.paste([scr.Line(text = "   ", lt = scr.ACTION)])
+
+    sp.gotoPos(1, 0)
+    sp.cmd("deleteNextWord")
+
+    assert len(sp.lines) == 1
+    assert sp.lines[0].text == "One Two Three"
+
+# Test deleting previous word, undo function.
+def testDeletePreviousWordUndo():
+    sp = u.new()
+
+    sp.paste([scr.Line(text = "One Two Three", lt = scr.ACTION)])
+
+    sp.gotoPos(0, 7)
+    sp.cmd("deletePreviousWord")
+    sp.cmd("undo")
+
+    # Text should be restored
+    assert sp.lines[0].text == "One Two Three"
+
+    # Cursor position should be the same as before the deletion
+    assert sp.column == 7
+
+    # Test redo
+    sp.cmd("redo")
+    assert sp.lines[0].text == "One  Three"
+
+# Test deleting next word, undo function.
+def testDeleteNextWordUndo():
+    sp = u.new()
+
+    sp.paste([scr.Line(text = "One Two Three", lt = scr.ACTION)])
+
+    sp.gotoPos(0, 4)
+    sp.cmd("deleteNextWord")
+    sp.cmd("undo")
+
+    # Text should be restored
+    assert sp.lines[0].text == "One Two Three"
+
+    # Cursor position should be the same as before the deletion
+    assert sp.column == 4
+
+    # Test redo
+    sp.cmd("redo")
+    assert sp.lines[0].text == "One  Three"
+
+from util import findNextNonSpace, findPreviousNonSpace
+
+def testFindNextNonSpace():
+    f = findNextNonSpace
+    assert f("One Two", 0) == 0
+    assert f("One Two", 3) == 4
+    assert f("One    Two", 3) == 7
+    assert f(" ", 0) == 1
+
+def testFindPreviousNonSpace():
+    f = findPreviousNonSpace
+    assert f("One Two", 6) == 6
+    assert f("One Two", 3) == 2
+    assert f("One    Two", 6) == 2
+    assert f(" ", 0) == 0

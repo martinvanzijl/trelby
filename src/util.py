@@ -985,6 +985,31 @@ def findFileInPath(filename):
 
     return findFile(filename, dirs)
 
+# return position of next non-space in s after given start,
+# or len(s) - 1 if there is none
+def findNextNonSpace(s, start):
+    l = len(s)
+    if start >= l: return l
+
+    pos = max(start, 0)
+    while pos < l:
+        if s[pos] != " ": break
+        pos += 1
+
+    return pos
+
+# return position of previous non-space in s before given start,
+# or 0 if there is none
+def findPreviousNonSpace(s, start):
+    if start <= 0: return 0
+
+    pos = min(start, len(s) - 1)
+    while pos > 0:
+        if s[pos] != " ": break
+        pos -= 1
+
+    return pos
+
 # simple timer class for use during development only
 class TimerDev:
 
